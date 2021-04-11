@@ -2,6 +2,7 @@ module.exports = {
   siteMetadata: {
     title: 'Rosemary Jovanovic - Canberra Psychologist',
     description: 'Caring Effective Psychological Services',
+    url: 'https://rosemaryjovanovic.com.au/',
     author: 'Sam Ilic',
   },
   plugins: [
@@ -31,6 +32,15 @@ module.exports = {
         path: `${__dirname}/src/assets/`,
       },
       __key: "assets",
+    },
+    {
+      resolve: `gatsby-plugin-sass`,
+      options: {
+        postCssPlugins: [
+          require("tailwindcss"),
+          require("./tailwind.config.js"), // Optional: Load custom Tailwind CSS configuration
+        ],
+      },
     },
   ],
 };
