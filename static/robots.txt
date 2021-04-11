@@ -1,0 +1,3 @@
+User-agent: *
+
+sitemap: https://rosemaryjovanovic.com.au/sitemap.xml

@@ -1,6 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: "rosemaryjovanovic",
+    title: 'Rosemary Jovanovic - Canberra Psychologist',
+    description: 'Caring Effective Psychological Services',
+    author: 'Sam Ilic',
   },
   plugins: [
     "gatsby-plugin-image",
@@ -21,6 +23,14 @@ module.exports = {
         path: "./src/images/",
       },
       __key: "images",
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'common',
+        path: `${__dirname}/src/assets/`,
+      },
+      __key: "assets",
     },
   ],
 };
