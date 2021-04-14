@@ -1,29 +1,34 @@
 module.exports = {
   siteMetadata: {
     title: 'Rosemary Jovanovic - Canberra Psychologist',
+    name: 'Rosemary Jovanovic',
     description: 'Caring Effective Psychological Services',
     url: 'https://rosemaryjovanovic.com.au/',
     author: 'Sam Ilic',
+    constactEmail: 'rosie@rosemaryjovanovic.com.au',
+    authorUrl: 'https://github.com/stage88',
+    sourceUrl: 'https://github.com/stage88/rosemaryjovanovic',
+    siteImage: '/profile-photo-s.jpg',
   },
   plugins: [
-    "gatsby-plugin-image",
+    'gatsby-plugin-image',
     {
-      resolve: "gatsby-plugin-google-analytics",
+      resolve: 'gatsby-plugin-google-analytics',
       options: {
-        trackingId: "UA-31115710-1",
+        trackingId: 'UA-31115710-1',
       },
     },
-    "gatsby-plugin-react-helmet",
-    "gatsby-plugin-sitemap",
-    "gatsby-plugin-sharp",
-    "gatsby-transformer-sharp",
+    'gatsby-plugin-react-helmet',
+    'gatsby-plugin-sitemap',
+    'gatsby-plugin-sharp',
+    'gatsby-transformer-sharp',
     {
-      resolve: "gatsby-source-filesystem",
+      resolve: 'gatsby-source-filesystem',
       options: {
-        name: "images",
-        path: "./src/images/",
+        name: 'images',
+        path: './src/images/',
       },
-      __key: "images",
+      __key: 'images',
     },
     {
       resolve: 'gatsby-source-filesystem',
@@ -31,16 +36,8 @@ module.exports = {
         name: 'common',
         path: `${__dirname}/src/assets/`,
       },
-      __key: "assets",
+      __key: 'assets',
     },
-    {
-      resolve: `gatsby-plugin-sass`,
-      options: {
-        postCssPlugins: [
-          require("tailwindcss"),
-          require("./tailwind.config.js"), // Optional: Load custom Tailwind CSS configuration
-        ],
-      },
-    },
+    'gatsby-plugin-sass'
   ],
 };
