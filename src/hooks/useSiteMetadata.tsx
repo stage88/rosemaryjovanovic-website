@@ -6,7 +6,7 @@ type Props = {
       title: string;
       name: string;
       description: string;
-      url: string;
+      siteUrl: string;
       author: string;
       authorUrl: string;
       sourceUrl: string;
@@ -24,7 +24,7 @@ const useSiteMetadata = () => {
           title
           name
           description
-          url
+          siteUrl
           author
           sourceUrl
           siteImage

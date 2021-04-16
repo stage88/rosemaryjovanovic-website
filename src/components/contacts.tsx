@@ -2,7 +2,7 @@ import React from 'react';
 import useSiteMetadata from '../hooks/useSiteMetadata';
 
 const Contacts: React.FC = () => {
-  const { title, author, sourceUrl, authorUrl, constactEmail } = useSiteMetadata();
+  const { constactEmail } = useSiteMetadata();
 
   return (
     <div id='contacts'>
