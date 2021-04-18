@@ -9,6 +9,9 @@ module.exports = {
     authorUrl: 'https://github.com/stage88',
     sourceUrl: 'https://github.com/stage88/rosemaryjovanovic-website',
     siteImage: '/profile-photo-s.jpg',
+    linkedInUrl: 'https://au.linkedin.com/in/rosemary-jovanovic-95a02367',
+    twitterUrl: 'https://twitter.com/rosiejov',
+    facebookUrl: 'https://www.facebook.com/rosemary.jovanovic',
   },
   plugins: [
     'gatsby-plugin-image',

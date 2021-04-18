@@ -12,6 +12,9 @@ type Props = {
       sourceUrl: string;
       siteImage: string;
       constactEmail: string;
+      linkedInUrl: string;
+      twitterUrl: string;
+      facebookUrl: string;
     };
   };
 };
@@ -30,6 +33,9 @@ const useSiteMetadata = () => {
           siteImage
           authorUrl
           constactEmail
+          linkedInUrl
+          twitterUrl
+          facebookUrl
         }
       }
     }
