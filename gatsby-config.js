@@ -15,10 +15,21 @@ module.exports = {
   },
   plugins: [
     'gatsby-plugin-image',
+    // {
+    //   resolve: 'gatsby-plugin-google-analytics',
+    //   options: {
+    //     trackingId: 'UA-31115710-1',
+    //   },
+    // },
     {
-      resolve: 'gatsby-plugin-google-analytics',
+      resolve: 'gatsby-plugin-google-gtag',
       options: {
-        trackingId: 'UA-31115710-1',
+        trackingIds: [
+          'G-DVKEWH6P8L',
+        ],
+        pluginConfig: {
+          head: true,
+        },
       },
     },
     'gatsby-plugin-react-helmet',
@@ -41,6 +52,6 @@ module.exports = {
       },
       __key: 'assets',
     },
-    'gatsby-plugin-sass'
+    'gatsby-plugin-sass',
   ],
 };
