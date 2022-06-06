@@ -15,12 +15,6 @@ module.exports = {
   },
   plugins: [
     'gatsby-plugin-image',
-    // {
-    //   resolve: 'gatsby-plugin-google-analytics',
-    //   options: {
-    //     trackingId: 'UA-31115710-1',
-    //   },
-    // },
     {
       resolve: 'gatsby-plugin-google-gtag',
       options: {
