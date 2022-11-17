@@ -2,16 +2,10 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import useSiteMetadata from '../hooks/useSiteMetadata';
 
-const SEO: React.FC = ({ children }) => {
+const SEO: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const site = useSiteMetadata();
 
-  const {
-    title,
-    description,
-    siteUrl,
-    author,
-    siteImage,
-  } = site;
+  const { title, description, siteUrl, author, siteImage } = site;
 
   return (
     <Helmet title={title} defaultTitle={title}>

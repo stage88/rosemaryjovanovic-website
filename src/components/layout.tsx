@@ -2,7 +2,7 @@ import React from 'react';
 import Header from './header';
 import SEO from './seo';
 
-const Layout: React.FC = ({ children }) => {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <>
       <SEO />
