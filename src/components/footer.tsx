@@ -8,7 +8,9 @@ const Footer: React.FC = () => {
     <div id='footer'>
       <div className='inner'>
         <ul className='copyright'>
-          <li>&copy; {new Date().getFullYear()} by {title}</li>
+          <li>
+            &copy; {new Date().getFullYear()} by {title}
+          </li>
           <li>
             <a href={sourceUrl}>Theme</a> by <a href={authorUrl}>{author}</a>
           </li>

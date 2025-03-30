@@ -88,7 +88,7 @@ Resources:
               QueryString: true
               Cookies:
                 Forward: none
-          - PathPattern: '*page-data/*' # do not cache page data
+          - PathPattern: '*_next/*' # do not cache static data
             MinTTL: 0
             MaxTTL: 0
             DefaultTTL: 0
@@ -98,18 +98,7 @@ Resources:
             ForwardedValues:
               QueryString: true
               Cookies:
-                Forward: none
-          - PathPattern: '*/app-data.json' # do not cache app data
-            MinTTL: 0
-            MaxTTL: 0
-            DefaultTTL: 0
-            Compress: true
-            TargetOriginId: !Sub ${ProjectName}-website-cdn-origin
-            ViewerProtocolPolicy: redirect-to-https
-            ForwardedValues:
-              QueryString: true
-              Cookies:
-                Forward: none
+                Forward: none          
         PriceClass: PriceClass_All
         HttpVersion: http2
         IPV6Enabled: true
