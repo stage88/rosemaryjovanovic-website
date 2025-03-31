@@ -11,6 +11,7 @@ type Props = {
   linkedInUrl: string;
   twitterUrl: string;
   facebookUrl: string;
+  gtmId: string;
 };
 
 const useSiteMetadata = (): Props => {
@@ -27,6 +28,7 @@ const useSiteMetadata = (): Props => {
     linkedInUrl: 'https://au.linkedin.com/in/rosemary-jovanovic-95a02367',
     twitterUrl: 'https://twitter.com/rosiejov',
     facebookUrl: 'https://www.facebook.com/rosemary.jovanovic',
+    gtmId: 'G-DVKEWH6P8L',
   }
 };
 
