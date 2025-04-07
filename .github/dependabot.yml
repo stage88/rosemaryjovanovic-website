@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for package.json and package-lock.json files in the root directory
+    directory: "/"
+    # Check for updates once a week (on Monday)
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Specify default assignees for pull requests
+    assignees:
+      - "stage88"
+    # Group all dependencies updates into a single PR
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    # Limit the number of open pull requests for version updates
+    open-pull-requests-limit: 10
+    # Allow up to 5 pull requests for security updates
+    pull-request-branch-name:
+      separator: "-"
+    # Apply a version strategy for new releases
+    versioning-strategy: auto
+    # Apply dependency version updates only for production dependencies
+    allow:
+      - dependency-type: "direct"
+    # Add labels for easier identification
+    labels:
+      - "dependencies"
+      - "dependabot"

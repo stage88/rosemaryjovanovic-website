@@ -12,7 +12,8 @@
     "preview": "serve bin",
     "lint": "next lint",
     "clean:build": "rimraf .next && rimraf bin",
-    "clean:packages": "rimraf package-lock.json && rimraf node_modules"
+    "clean:packages": "rimraf package-lock.json && rimraf node_modules",
+    "build:ci": "npm run clean:build && npm run build"
   },
   "dependencies": {
     "@next/third-parties": "15.2.4",
