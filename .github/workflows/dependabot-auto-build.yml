@@ -32,6 +32,10 @@ jobs:
       - name: Build
         id: build
         run: npm run build:ci
+
+      - name: Lint
+        id: lint
+        run: npm run lint
       
       - name: Enable auto-merge
         if: success()

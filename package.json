@@ -8,12 +8,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:ci": "npm run clean:build && npm run build",
     "start": "next dev",
     "preview": "serve bin",
     "lint": "next lint",
     "clean:build": "rimraf .next && rimraf bin",
-    "clean:packages": "rimraf package-lock.json && rimraf node_modules",
-    "build:ci": "npm run clean:build && npm run build"
+    "clean:packages": "rimraf package-lock.json && rimraf node_modules"
   },
   "dependencies": {
     "@next/third-parties": "15.3.0",
