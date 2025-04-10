@@ -27,5 +27,6 @@ updates:
     allow:
       - dependency-type: "direct"
     # Add labels for easier identification
-    labels:      
+    labels:
+      - "dependencies"
       - "dependabot"
