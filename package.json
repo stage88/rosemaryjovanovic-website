@@ -11,7 +11,7 @@
     "build:ci": "npm run clean:build && npm run build",
     "start": "next dev",
     "preview": "serve bin",
-    "lint": "next lint",
+    "lint": "eslint ./src",
     "clean:build": "rimraf .next && rimraf bin",
     "clean:packages": "rimraf package-lock.json && rimraf node_modules"
   },

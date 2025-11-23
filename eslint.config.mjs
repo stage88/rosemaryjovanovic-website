@@ -1,19 +1,13 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
+import { defineConfig } from 'eslint/config';
+import vitals from 'eslint-config-next/core-web-vitals';
+import typescript from 'eslint-config-next/typescript';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
-
-const eslintConfig = [
+const eslintConfig = defineConfig([
   {
     ignores: [],
   },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...vitals,
+  ...typescript,
   {
     rules: {
       '@typescript-eslint/ban-ts-comment': 'warn',
@@ -32,8 +26,9 @@ const eslintConfig = [
         },
       ],
       '@next/next/no-img-element': 'off',
+      'react/no-unescaped-entities': 'off',
     },
   },
-]
+]);
 
-export default eslintConfig
+export default eslintConfig;
