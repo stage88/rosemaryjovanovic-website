@@ -16,10 +16,10 @@
     "clean:packages": "rimraf package-lock.json && rimraf node_modules"
   },
   "dependencies": {
-    "@next/third-parties": "16.0.6",
+    "@next/third-parties": "16.0.7",
     "next": "16.0.7",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
     "sass": "1.94.2"
   },
   "devDependencies": {
@@ -30,7 +30,7 @@
     "@typescript-eslint/eslint-plugin": "8.48.1",
     "@typescript-eslint/parser": "8.48.1",
     "eslint": "9.39.1",
-    "eslint-config-next": "16.0.6",
+    "eslint-config-next": "16.0.7",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "serve": "14.2.5",
