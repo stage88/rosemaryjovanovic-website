@@ -1,23 +1,34 @@
 import Link from 'next/link';
 import React from 'react';
 import useSiteMetadata from '../hooks/useSiteMetadata';
-import Contacts from './contacts';
 
 const Header: React.FC = () => {
-  const { name, description } = useSiteMetadata();
+  const { name } = useSiteMetadata();
 
   return (
-    <header id='header'>
-      <div className='inner'>
-        <Link href='/' className='image avatar'>
-          <img src='/images/profile-photo-s.jpg' alt={name} />
+    <header className="site-header">
+      <div className="container header-container">
+        <Link href="/" className="logo">
+          <span className="logo-name">{name}</span>
+          <span className="logo-tagline">Registered Psychologist & Instructor</span>
         </Link>
-        <h1>
-          <strong>{name}</strong>
-        </h1>
-        <h1>{description}</h1>
+        
+        <nav>
+          <ul className="nav-menu">
+            <li><a href="#about">About Me</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#calm-space">Calm Space</a></li>
+            <li><a href="#ymhfa">YMHFA Courses</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+        
+        <div className="nav-cta">
+          <a href="#contact" className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }}>
+            Get in Touch
+          </a>
+        </div>
       </div>
-      <Contacts />
     </header>
   );
 };
