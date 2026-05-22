@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap');
 
+// Width at which the primary nav collapses into the hamburger menu.
+// Set generously so the long link labels never wrap on mid-size screens.
+$nav-breakpoint: 1100px;
+
 // Modern CSS Design Tokens
 :root {
   --font-serif: 'Playfair Display', Georgia, serif;
@@ -28,6 +32,16 @@
   --radius-md: 16px;
   --radius-lg: 24px;
   --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+
+  // Layout
+  --header-height: 80px;
+}
+
+// Compact the fixed header on small screens to reclaim vertical space
+@media (max-width: 600px) {
+  :root {
+    --header-height: 68px;
+  }
 }
 
 // Reset and Core Styles
@@ -41,6 +55,9 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  // Always reserve the scrollbar gutter so locking scroll (when the mobile
+  // menu opens) doesn't reflow the page or shift the fixed header.
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -78,6 +95,10 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+
+  @media (max-width: 600px) {
+    padding: 0 1.25rem;
+  }
 }
 
 .section-padding {
@@ -85,6 +106,11 @@ a {
   @media (max-width: 768px) {
     padding: 4rem 0;
   }
+}
+
+// Keep anchored section titles clear of the fixed header when jumped to
+section[id] {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
 .badge {
@@ -147,6 +173,15 @@ a {
   }
 }
 
+// Visible keyboard-focus ring. `.btn` clears the default outline, so
+// restore one here for keyboard users (mouse clicks stay ring-free).
+:focus-visible {
+  outline-style: solid;
+  outline-width: 3px;
+  outline-color: var(--color-cta);
+  outline-offset: 2px;
+}
+
 // Sticky Top Header / Navbar
 .site-header {
   position: fixed;
@@ -163,7 +198,8 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 80px;
+    gap: 1rem;
+    height: var(--header-height);
   }
   
   .logo {
@@ -192,16 +228,17 @@ a {
     align-items: center;
     gap: 2rem;
     list-style: none;
-    
-    @media (max-width: 900px) {
-      display: none; // Let's keep it simple or implement a clean responsive menu later if needed
+
+    @media (max-width: $nav-breakpoint) {
+      display: none;
     }
-    
+
     a {
       font-size: 0.95rem;
       font-weight: 500;
       color: var(--color-text-muted);
-      
+      white-space: nowrap;
+
       &:hover, &.active {
         color: var(--color-primary);
       }
@@ -209,9 +246,154 @@ a {
   }
 
   .nav-cta {
-    @media (max-width: 480px) {
+    .header-cta {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    // The mobile menu carries its own CTA, so hide this one alongside the nav
+    @media (max-width: $nav-breakpoint) {
       display: none;
     }
+  }
+
+  // Hamburger toggle — visible only on small screens
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+
+    span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      border-radius: 2px;
+      background-color: var(--color-primary-dark);
+      transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+
+    &.is-open span {
+      &:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      &:nth-child(2) { opacity: 0; }
+      &:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    }
+
+    @media (max-width: $nav-breakpoint) {
+      display: flex;
+    }
+  }
+
+  // Scale the logo down so it never crowds the hamburger on narrow phones.
+  // Selectors match `.logo .logo-name` to match the base rule's specificity.
+  @media (max-width: 480px) {
+    .logo .logo-name {
+      font-size: 1.15rem;
+    }
+    .logo .logo-tagline {
+      font-size: 0.65rem;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Keep the name on a single line on the very smallest phones
+  @media (max-width: 360px) {
+    .logo .logo-name {
+      font-size: 0.9rem;
+    }
+    .logo .logo-tagline {
+      font-size: 0.58rem;
+      letter-spacing: 0.2px;
+    }
+  }
+}
+
+// Slide-down mobile navigation panel.
+// Kept outside .site-header: the header's backdrop-filter would otherwise
+// become the containing block and clip these fixed-position elements.
+.mobile-nav {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem 2rem;
+  background-color: var(--color-bg-base);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-130%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 0.25s ease, visibility 0.35s;
+  z-index: 1050;
+
+  &.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-nav-menu {
+    list-style: none;
+    margin-bottom: 1.25rem;
+
+    li {
+      border-bottom: 1px solid var(--color-border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    a {
+      display: block;
+      padding: 0.9rem 0.25rem;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--color-text-main);
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  @media (min-width: $nav-breakpoint + 1px) {
+    display: none;
+  }
+}
+
+// Dimmed backdrop behind the open mobile menu
+.mobile-nav-overlay {
+  position: fixed;
+  inset: var(--header-height) 0 0 0;
+  background-color: rgba(42, 49, 45, 0.45);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+  z-index: 1040;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (min-width: $nav-breakpoint + 1px) {
+    display: none;
   }
 }
 
@@ -240,13 +422,9 @@ a {
   
   .hero-content {
     h1 {
-      font-size: 3.5rem;
+      font-size: clamp(2.25rem, 6vw + 1rem, 3.5rem);
       margin-bottom: 1.5rem;
       font-weight: 700;
-      
-      @media (max-width: 768px) {
-        font-size: 2.5rem;
-      }
     }
     
     .hero-lead {
@@ -280,8 +458,9 @@ a {
     
     .hero-image-frame {
       position: relative;
-      width: 320px;
-      height: 320px;
+      width: min(320px, 78vw);
+      height: auto;
+      aspect-ratio: 1 / 1;
       border-radius: 40% 60% 60% 40% / 50% 30% 70% 50%; // Natural organic framed shape
       overflow: hidden;
       box-shadow: var(--shadow-lg);
@@ -332,6 +511,12 @@ a {
     justify-content: center;
     position: relative;
 
+    // The hero section already shows her portrait — only repeat it here
+    // on the full-width desktop layout where the two-column grid needs it.
+    @media (max-width: 900px) {
+      display: none;
+    }
+
     .about-image-decor {
       position: absolute;
       bottom: -20px;
@@ -372,7 +557,7 @@ a {
   
   .about-content {
     h2 {
-      font-size: 2.5rem;
+      font-size: clamp(1.9rem, 3vw + 1rem, 2.5rem);
       margin-bottom: 1.5rem;
     }
     
@@ -422,7 +607,7 @@ a {
     margin: 0 auto 4rem auto;
     
     h2 {
-      font-size: 2.5rem;
+      font-size: clamp(1.9rem, 3vw + 1rem, 2.5rem);
       margin-bottom: 1rem;
     }
     
@@ -450,6 +635,10 @@ a {
     transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
+
+    @media (max-width: 600px) {
+      padding: 1.75rem;
+    }
     
     &::before {
       content: '';
@@ -543,15 +732,16 @@ a {
 .calm-space-section {
   background: linear-gradient(135deg, var(--color-primary-dark) 0%, #1e2c24 100%);
   color: #ffffff;
+  margin: 0 2rem;
   border-radius: var(--radius-lg);
   padding: 4.5rem;
   box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
-  
+
   @media (max-width: 768px) {
     padding: 3rem 1.5rem;
-    border-radius: 0;
+    margin: 0 1.25rem;
   }
   
   &::before {
@@ -582,7 +772,7 @@ a {
   
   .calm-space-info {
     h2 {
-      font-size: 2.8rem;
+      font-size: clamp(2rem, 4vw + 1rem, 2.8rem);
       color: #ffffff;
       margin-bottom: 1.5rem;
     }
@@ -645,8 +835,9 @@ a {
   
   .breathing-ring-outer {
     position: relative;
-    width: 260px;
-    height: 260px;
+    width: min(260px, 72vw);
+    height: auto;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -667,8 +858,8 @@ a {
   }
   
   .breathing-circle {
-    width: 180px;
-    height: 180px;
+    width: 69%;
+    height: 69%;
     border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, #5d90a0 0%, #355d6b 100%);
     box-shadow: 0 0 50px rgba(61, 108, 123, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
@@ -700,7 +891,7 @@ a {
     }
     
     .breathing-instruction {
-      font-size: 1.4rem;
+      font-size: clamp(1.05rem, 4.5vw, 1.4rem);
       font-weight: 600;
       color: #ffffff;
       margin-bottom: 0.3rem;
@@ -718,8 +909,30 @@ a {
   .widget-controls {
     margin-top: 2rem;
     display: flex;
+    flex-direction: column;
     gap: 1rem;
+    width: 100%;
+    max-width: 260px;
     z-index: 5;
+
+    // Stack the controls so both buttons share one consistent width
+    .btn {
+      width: 100%;
+    }
+
+    // The Reset button is always laid out, so the breathing circle never
+    // shifts when it appears — it simply fades in/out. Kept slow and
+    // gentle: this space is for stressed, anxious visitors.
+    .reset-control {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 2s ease, visibility 2s;
+
+      &.is-visible {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
   }
 }
 
@@ -743,7 +956,7 @@ a {
 
   .ymhfa-content {
     h2 {
-      font-size: 2.6rem;
+      font-size: clamp(1.9rem, 3.5vw + 1rem, 2.6rem);
       margin-bottom: 1.5rem;
       line-height: 1.25;
     }
@@ -785,6 +998,10 @@ a {
     text-align: center;
     position: relative;
     overflow: hidden;
+
+    @media (max-width: 600px) {
+      padding: 2rem 1.5rem;
+    }
 
     &::after {
       content: '';
@@ -845,13 +1062,9 @@ a {
 
   .contact-info {
     h2 {
-      font-size: 2.8rem;
+      font-size: clamp(2rem, 4vw + 1rem, 2.8rem);
       margin-bottom: 1.5rem;
       font-weight: 700;
-      
-      @media (max-width: 480px) {
-        font-size: 2.2rem;
-      }
     }
 
     .contact-intro {
@@ -1058,3 +1271,23 @@ a {
     border-radius: 60% 40% 40% 60% / 30% 60% 40% 70%;
   }
 }
+
+// Honour the OS "reduce motion" preference: calm the decorative motion
+// (morphing portrait, hover lifts, smooth scroll) while keeping the
+// guided-breathing animation, which is the whole point of the tool.
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .hero-image-frame {
+    animation: none !important;
+  }
+
+  .btn:hover,
+  .service-card:hover,
+  .social-icon:hover {
+    transform: none !important;
+  }
+}
+

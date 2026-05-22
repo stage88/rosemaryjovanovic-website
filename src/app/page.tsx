@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import useSiteMetadata from '../hooks/useSiteMetadata';
 import Footer from '../components/footer';
 import Contacts from '../components/contacts';
@@ -126,67 +126,61 @@ const services: Service[] = [
 export default function IndexPage() {
   const { contactEmail } = useSiteMetadata();
 
-  // Guided Breathing Tool ("Calm Space") State
+  // Guided Breathing Tool ("Calm Space") State.
+  // The engine tracks only elapsed seconds — the active phase and the
+  // countdown are derived from it, so the two can never drift out of sync.
   const [breathingActive, setBreathingActive] = useState<boolean>(false);
   const [breathingMode, setBreathingMode] = useState<'box' | 'deep'>('box');
-  const [breathPhase, setBreathPhase] = useState<'idle' | 'inhale' | 'hold' | 'exhale' | 'hold-out'>('idle');
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [_phaseIndex, setPhaseIndex] = useState<number>(0);
+  const [elapsed, setElapsed] = useState<number>(0);
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentMode = breathingModes[breathingMode];
 
-  // Guided Breathing Logic (using event-driven state initialization to prevent linter errors)
+  // A single, clean timer: advance elapsed seconds while the session runs.
   useEffect(() => {
-    if (!breathingActive) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      return;
-    }
+    if (!breathingActive) return;
 
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          let nextDuration = 0;
-          setPhaseIndex((prevIndex) => {
-            const nextIndex = (prevIndex + 1) % currentMode.sequence.length;
-            const nextPhase = currentMode.sequence[nextIndex];
-            setBreathPhase(nextPhase.phase);
-            nextDuration = nextPhase.duration;
-            return nextIndex;
-          });
-          return nextDuration;
-        }
-        return prev - 1;
-      });
+    const intervalId = setInterval(() => {
+      setElapsed((seconds) => seconds + 1);
     }, 1000);
 
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [breathingActive, breathingMode, currentMode.sequence]);
+    return () => clearInterval(intervalId);
+  }, [breathingActive]);
 
-  const handleStartPause = () => {
-    const nextActive = !breathingActive;
-    setBreathingActive(nextActive);
-    if (!nextActive) {
-      setBreathPhase('idle');
-      setTimeLeft(0);
-      setPhaseIndex(0);
-    } else {
-      // Set first phase
-      const initialPhase = currentMode.sequence[0];
-      setBreathPhase(initialPhase.phase);
-      setTimeLeft(initialPhase.duration);
-      setPhaseIndex(0);
+  // Derive the current phase and remaining seconds from elapsed time.
+  const { sequence } = currentMode;
+  const cycleLength = sequence.reduce((total, step) => total + step.duration, 0);
+  const positionInCycle = elapsed % cycleLength;
+
+  let phaseStart = 0;
+  let activeStep = sequence[0];
+  for (const step of sequence) {
+    if (positionInCycle < phaseStart + step.duration) {
+      activeStep = step;
+      break;
     }
+    phaseStart += step.duration;
+  }
+
+  const sessionStarted = breathingActive || elapsed > 0;
+  const breathPhase: 'idle' | 'inhale' | 'hold' | 'exhale' | 'hold-out' =
+    sessionStarted ? activeStep.phase : 'idle';
+  const timeLeft = activeStep.duration - (positionInCycle - phaseStart);
+
+  // Start, or pause without losing your place in the breathing cycle.
+  const handleStartPause = () => {
+    setBreathingActive((active) => !active);
+  };
+
+  // Stop the session and return the widget to its resting state.
+  const handleReset = () => {
+    setBreathingActive(false);
+    setElapsed(0);
   };
 
   const handleModeChange = (mode: 'box' | 'deep') => {
     setBreathingActive(false);
+    setElapsed(0);
     setBreathingMode(mode);
-    setBreathPhase('idle');
-    setTimeLeft(0);
-    setPhaseIndex(0);
   };
 
   return (
@@ -290,7 +284,7 @@ export default function IndexPage() {
       </section>
 
       {/* INNOVATIVE CALM SPACE BREATHING TOOL */}
-      <section id="calm-space" className="section-padding container" style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <section id="calm-space" className="section-padding container">
         <div className="calm-space-section">
           <div className="calm-space-container">
             <div className="calm-space-info">
@@ -331,7 +325,7 @@ export default function IndexPage() {
                     {breathPhase === 'exhale' && 'Breathe Out'}
                     {breathPhase === 'hold-out' && 'Rest'}
                   </span>
-                  {breathingActive && (
+                  {sessionStarted && (
                     <span className="breathing-timer">{timeLeft}s</span>
                   )}
                 </div>
@@ -351,9 +345,23 @@ export default function IndexPage() {
                       <svg fill="currentColor" viewBox="0 0 24 24" width="18" height="18" style={{ marginRight: '4px' }}>
                         <path d="M8 5v14l11-7z"/>
                       </svg>
-                      Begin Breathing
+                      {elapsed > 0 ? 'Resume Space' : 'Begin Breathing'}
                     </>
                   )}
+                </button>
+                {/* Always rendered so its space is reserved — it only fades
+                    in/out, so the breathing circle never shifts. */}
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className={`btn btn-secondary reset-control${elapsed > 0 ? ' is-visible' : ''}`}
+                  aria-hidden={elapsed === 0}
+                  tabIndex={elapsed > 0 ? 0 : -1}
+                >
+                  <svg fill="currentColor" viewBox="0 0 24 24" width="18" height="18" style={{ marginRight: '4px' }}>
+                    <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+                  </svg>
+                  Reset
                 </button>
               </div>
             </div>
