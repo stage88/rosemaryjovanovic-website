@@ -23,7 +23,12 @@ $nav-breakpoint: 1100px;
   --color-text-main: #2a312d;     // Grounding soft slate dark green-grey
   --color-text-muted: #5e6b63;    // Readable secondary text
   --color-border: #e2ded5;        // Delicate neutral border
-  
+
+  // Always-dark surfaces (footer + Calm Space) — themed independently of the
+  // light/dark inversion so they stay dark in both modes.
+  --color-surface-deep: #2d4237;
+  --color-surface-deep-2: #1e2c24;
+
   // Shadows & Spacing
   --shadow-sm: 0 2px 8px rgba(70, 98, 83, 0.04);
   --shadow-md: 0 8px 30px rgba(70, 98, 83, 0.08);
@@ -41,6 +46,57 @@ $nav-breakpoint: 1100px;
 @media (max-width: 600px) {
   :root {
     --header-height: 68px;
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────
+//   Dark theme
+//   Applied by the theme provider, which adds `.dark` to <html>. A small
+//   inline script in `app/layout.tsx` sets this class before first paint
+//   so there is no flash of the wrong theme.
+// ──────────────────────────────────────────────────────────────────────
+html.dark {
+  --color-bg-base: #1a2520;       // Deep warm forest — the page canvas
+  --color-bg-alt: #1f2a25;        // Alt sections (About, YMHFA, Contact)
+  --color-bg-card: #243029;       // Surfaces (cards)
+
+  --color-primary: #88a594;       // Lighter sage for text / badges in dark
+  --color-primary-light: #2a3a30; // Dark sage tint (badge bg, contact-icon bg)
+  --color-primary-dark: #c5d6cc;  // Inverted: now the LIGHT heading colour
+
+  --color-accent: #7ba8b8;        // Lighter ocean teal
+  --color-accent-light: #243036;  // Dark teal tint
+
+  // CTA terracotta stays the same — it's the brand warm accent
+  // --color-cta unchanged
+  // --color-cta-hover unchanged
+
+  --color-text-main: #e6e3da;     // Warm off-white
+  --color-text-muted: #9ea69e;    // Muted body text
+  --color-border: #2f3934;        // Subtle dark border
+
+  // Always-dark surfaces slip a bit darker than light mode for separation
+  --color-surface-deep: #131c17;
+  --color-surface-deep-2: #0a120e;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+
+  // The primary button must keep enough contrast under white text — using
+  // `--color-primary` (now light sage) directly would fail WCAG.
+  .btn.btn-primary {
+    background-color: #4a6a58;
+
+    &:hover {
+      background-color: #5a8068;
+    }
+  }
+
+  // Header backdrop — dark rgba instead of cream rgba
+  .site-header {
+    background-color: rgba(26, 37, 32, 0.82);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
   }
 }
 
@@ -66,6 +122,21 @@ body {
   font-family: var(--font-sans);
   line-height: 1.7;
   overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+// Surfaces that don't already have a transition — fade them softly when the
+// theme switches so the page settles together instead of snapping in pieces.
+.site-footer,
+.about-section,
+.services-section,
+.ymhfa-section,
+.contact-section,
+.calm-space-section,
+.about-image-card,
+.ymhfa-card,
+.contact-card-centered {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
 }
 
 // Typography
@@ -257,6 +328,20 @@ section[id] {
     }
   }
 
+  // Right-hand grouping: theme toggle, CTA, hamburger
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  // Tighter header layout when the toggle is hidden — narrow phones
+  @media (max-width: 480px) {
+    .mode-toggle {
+      display: none; // Mirrored inside the mobile menu instead
+    }
+  }
+
   // Hamburger toggle — visible only on small screens
   .nav-toggle {
     display: none;
@@ -315,6 +400,35 @@ section[id] {
   }
 }
 
+// Cycling light / dark / system theme button. Top-level so the rule applies
+// to both the header copy and the mobile-menu copy.
+.mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+  }
+
+  .mode-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+}
+
 // Slide-down mobile navigation panel.
 // Kept outside .site-header: the header's backdrop-filter would otherwise
 // become the containing block and clip these fixed-position elements.
@@ -369,6 +483,30 @@ section[id] {
 
   .btn {
     width: 100%;
+  }
+
+  // Theme switch row, styled to match the menu links
+  .mobile-nav-theme {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.25rem 0.9rem;
+    margin-bottom: 1rem;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--color-text-main);
+
+    .mode-toggle {
+      margin-right: -8px; // Optical alignment with the link text padding
+    }
+
+    // The header copy of the toggle is hidden below 480px, so only show this
+    // copy at small widths.
+    @media (min-width: 481px) {
+      display: none;
+    }
   }
 
   @media (min-width: $nav-breakpoint + 1px) {
@@ -730,7 +868,7 @@ section[id] {
 
 // Calm Space Interactive Breathing Widget
 .calm-space-section {
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, #1e2c24 100%);
+  background: linear-gradient(135deg, var(--color-surface-deep) 0%, var(--color-surface-deep-2) 100%);
   color: #ffffff;
   margin: 0 2rem;
   border-radius: var(--radius-lg);
@@ -1193,7 +1331,7 @@ section[id] {
 
 // Footer
 .site-footer {
-  background-color: var(--color-primary-dark);
+  background-color: var(--color-surface-deep);
   color: rgba(255, 255, 255, 0.7);
   padding: 4rem 0 2rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -1288,6 +1426,20 @@ section[id] {
   .service-card:hover,
   .social-icon:hover {
     transform: none !important;
+  }
+
+  // Theme switch should also be instant under reduced motion
+  body,
+  .site-footer,
+  .about-section,
+  .services-section,
+  .ymhfa-section,
+  .contact-section,
+  .calm-space-section,
+  .about-image-card,
+  .ymhfa-card,
+  .contact-card-centered {
+    transition: none !important;
   }
 }
 

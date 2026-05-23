@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import useSiteMetadata from '../hooks/useSiteMetadata';
+import ModeToggle from './mode-toggle';
 
 const navLinks = [
   { href: '#about', label: 'About Me' },
@@ -60,24 +61,28 @@ const Header: React.FC = () => {
             </ul>
           </nav>
 
-          <div className="nav-cta">
-            <a href="#contact" className="btn btn-primary header-cta">
-              Get in Touch
-            </a>
-          </div>
+          <div className="header-actions">
+            <ModeToggle />
 
-          <button
-            type="button"
-            className={`nav-toggle ${menuOpen ? 'is-open' : ''}`}
-            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+            <div className="nav-cta">
+              <a href="#contact" className="btn btn-primary header-cta">
+                Get in Touch
+              </a>
+            </div>
+
+            <button
+              type="button"
+              className={`nav-toggle ${menuOpen ? 'is-open' : ''}`}
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -94,6 +99,10 @@ const Header: React.FC = () => {
             </li>
           ))}
         </ul>
+        <div className="mobile-nav-theme">
+          <span>Theme</span>
+          <ModeToggle />
+        </div>
         <a href="#contact" className="btn btn-primary" onClick={closeMenu}>
           Get in Touch
         </a>

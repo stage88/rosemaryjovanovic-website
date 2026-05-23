@@ -5,7 +5,12 @@ import { GoogleTagManager } from '@next/third-parties/google';
 import '../assets/scss/main.scss';
 
 import Header from '@/components/header';
+import { ThemeProvider } from '@/components/theme-provider';
 import useSiteMetadata, { siteMetadata } from '@/hooks/useSiteMetadata';
+
+// Runs synchronously during HTML parsing — sets the theme class on <html>
+// before any content paints, eliminating the flash of the wrong theme.
+const themeInitScript = `(function(){try{var k='rj-ui-theme';var t=localStorage.getItem(k);var s=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var c=(t==='dark'||t==='light')?t:s;document.documentElement.classList.add(c);}catch(e){}})();`;
 
 const site = siteMetadata;
 
@@ -70,10 +75,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <GoogleTagManager gtmId={gtmId} />
 
       <body>
-        <div>
-          <Header />
-          <div id='main'>{children}</div>
-        </div>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <ThemeProvider>
+          <div>
+            <Header />
+            <div id='main'>{children}</div>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
